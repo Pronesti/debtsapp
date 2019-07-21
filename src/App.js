@@ -6,10 +6,12 @@ import Users from './views/Users'
 import Debts from './views/Debts'
 import Home from './views/Home'
 import Navbar from './components/Navbar'
+import {Container} from '@material-ui/core'
 
 const App = () => {
   return (
     <Router>
+    <Container maxWidth="sm">
     <Navbar />
     <Switch>
     <Route exact path="/" component={Home} />
@@ -18,6 +20,7 @@ const App = () => {
     <Route path="/debts" component={Debts} />
     <Route path="/users" component={Users} />
     </Switch>
+    </Container>
     </Router>
   )
 }
