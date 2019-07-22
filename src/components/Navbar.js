@@ -16,7 +16,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const options = [
-  {name: 'Home', url: '/'},{name: 'Debts', url: '/debts'},{name: 'Users', url: '/users'},{name: 'Add User', url: '/addUser'},{name: 'Add Debt', url: '/addDebt'}
+  {name: 'Home', url: '/'},{name: 'Debts', url: '/debts'},{name: 'Users', url: '/users'},{name: 'Add User', url: '/addUser'},{name: 'Add Debt', url: '/addDebt'},{name: 'Daily', url: '/daily'},{name: 'Weekly', url: '/weekly'},{name: 'Statistics', url: '/statistics'}
 ];
 
 const Navbar =() =>  {

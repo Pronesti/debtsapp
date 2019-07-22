@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   root: {
     padding: theme.spacing(3, 2),
-    width: '80vw'
+    width: '344px'
   }
 }));
 
@@ -78,7 +78,7 @@ const AddUser = () => {
         <Typography variant='h5' align='center'>
           Add User
         </Typography>
-        <FormControl>
+        <FormControl style={{display:'flex',justifyContent:'center', alignItems:'center', width: '100%'}}>
           <form>
             <Grid item>
               <TextField
@@ -153,10 +153,10 @@ const AddUser = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color='primary'>
-            Disagree
+            Cancel
           </Button>
           <Button onClick={addUserToFireStore} color='primary' autoFocus>
-            Agree
+            Add
           </Button>
         </DialogActions>
       </Dialog>

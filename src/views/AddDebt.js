@@ -5,11 +5,11 @@ import {
   Select,
   MenuItem,
   FormControl,
-  InputAdornment,
   Button
 } from '@material-ui/core';
-import { Grid, Paper, Typography,TextField } from '@material-ui/core';
+import { Grid, Paper, Typography, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import moment from 'moment'
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -21,23 +21,21 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(1),
     width: 200,
     padding: 10,
-    marginBottom: theme.spacing(3),
-
+    marginBottom: theme.spacing(3)
   },
-  dense: {
-  },
+  dense: {},
   menu: {
     width: 200
   },
   root: {
     padding: theme.spacing(3, 2),
-    width: '80vw'
+    width: '344px'
   },
-  select:{
+  select: {
     marginLeft: theme.spacing(2),
     marginRight: theme.spacing(1),
     padding: 10,
-    width: 200,
+    width: 200
   }
 }));
 
@@ -63,8 +61,9 @@ function findWithAttr(array, attr, value) {
 
 const AddDebt = () => {
   const [users, setUsers] = useState([]);
-  const [personName, setPersonName] = useState("none");
+  const [personName, setPersonName] = useState('none');
   const [amount, setAmount] = useState();
+  const [date, setDate] = useState(moment().format('YYYY-MM-DDTHH:mm'));
   const [userID, setUserID] = useState();
   const classes = useStyles();
   function handleChangeUser(event) {
@@ -90,66 +89,85 @@ const AddDebt = () => {
   }, []);
 
   const addDebt = () => {
+    console.log(date)
+    console.log(new Date(moment(date)))
     var refDB = db.collection('debts');
     refDB.doc().set(
       {
         user: db.doc('users/' + userID),
         value: parseInt(amount, 10),
-        date: firebase.firestore.FieldValue.serverTimestamp()
+        date: new Date(moment(date)),
       },
       { merge: true }
     );
   };
+
+  console.log(date)
   return (
     <Grid container spacing={3} justify='center' alignItems='center'>
       <Paper className={classes.root}>
-        <Typography variant="h5" align="center">Add Debt</Typography> 
-        <form>
-        <Grid item>
-          <FormControl>
-            <Select
-              placeholder="Enter amount..."
-              className={classes.select}
-              autoWidth={false}
-              id='adornment-select'
-              name='User'
-              //displayEmpty
-              onChange={handleChangeUser}
-              value={personName}
-              //input={<Input id='select-multiple-placeholder' />}
-              MenuProps={MenuProps}
-              inputProps={{
-                name: 'user',
-                id: 'user-simple',
-              }}>
-              <MenuItem value="none" disabled>
-            Select User
-              </MenuItem>
-              {users.map(user => (
-                <MenuItem key={user.id} value={user.name}>
-                  {user.name}
+        <Typography variant='h5' align='center'>
+          Add Debt
+        </Typography>
+        <form >
+          <Grid item>
+            <FormControl style={{display:'flex',justifyContent:'center', alignItems:'center', width: '100%'}}>
+              <Select
+                placeholder='Enter amount...'
+                className={classes.select}
+                autoWidth={false}
+                id='adornment-select'
+                name='User'
+                //displayEmpty
+                onChange={handleChangeUser}
+                value={personName}
+                //input={<Input id='select-multiple-placeholder' />}
+                MenuProps={MenuProps}
+                inputProps={{
+                  name: 'user',
+                  id: 'user-simple'
+                }}>
+                <MenuItem value='none' disabled>
+                  Select User
                 </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+                {users.map(user => (
+                  <MenuItem key={user.id} value={user.name}>
+                    {user.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
-                  <br />
-                  <Grid item>
-          <FormControl>
-            <TextField
-            className={classes.textField}
-              id='adornment-amount'
-              value={amount}
-              onChange={handleChangeAmount}
-              startAdornment={
-                <InputAdornment position='start'>$</InputAdornment>
-              }
-              placeholder="Enter amount..."
-            />
+          <br />
+          <Grid item>
+            <FormControl style={{display:'flex',justifyContent:'center', alignItems:'center', width: '100%'}}>
+              <TextField
+                className={classes.textField}
+                id='adornment-amount'
+                value={amount}
+                onChange={handleChangeAmount}
+                placeholder='Enter amount...'
+              />
+            </FormControl>
+          </Grid>
+          <Grid item>
+          <FormControl style={{display:'flex',justifyContent:'center', alignItems:'center', width: '100%'}}>
+          <TextField
+        id="date"
+        type="datetime-local"
+        className={classes.textField}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        value={date}
+        onChange={(e)=>setDate(e.target.value)}
+      />
           </FormControl>
           </Grid>
         </form>
-        <Button fullWidth variant="contained" color="primary" onClick={addDebt}>Add Debt</Button>
+        <Button fullWidth variant='contained' color='primary' onClick={addDebt}>
+          Add Debt
+        </Button>
       </Paper>
     </Grid>
   );
