@@ -8,6 +8,13 @@ import {
   Button
 } from '@material-ui/core';
 import { Grid, Paper, Typography, TextField } from '@material-ui/core';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
+} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import moment from 'moment'
 
@@ -65,8 +72,20 @@ const AddDebt = () => {
   const [amount, setAmount] = useState();
   const [date, setDate] = useState(moment().format('YYYY-MM-DDTHH:mm'));
   const [userID, setUserID] = useState();
+
   const classes = useStyles();
-  function handleChangeUser(event) {
+
+  const [open, setOpen] = React.useState(false);
+
+  function handleClickOpen() {
+    setOpen(true);
+  }
+
+  function handleClose() {
+    setOpen(false);
+  }
+
+  const handleChangeUser = (event) => {
     setPersonName(event.target.value);
     setUserID(users[findWithAttr(users, 'name', event.target.value)].id);
   }
@@ -89,20 +108,43 @@ const AddDebt = () => {
   }, []);
 
   const addDebt = () => {
-    console.log(date)
-    console.log(new Date(moment(date)))
+
+   if (checkFields() === true){
     var refDB = db.collection('debts');
     refDB.doc().set(
       {
         user: db.doc('users/' + userID),
         value: parseInt(amount, 10),
         date: new Date(moment(date)),
+        addTime: firebase.firestore.FieldValue.serverTimestamp()
       },
       { merge: true }
     );
+   }else{
+     alert(checkFields())
+   }
+
   };
 
-  console.log(date)
+  const checkFields = () =>{
+    let response = true;
+
+    if (userID === ''){
+      response = 'ERROR_ID'
+    }
+    if (personName === 'none' || personName === '') {
+      response = 'ERROR_NAME'
+    }
+    if (amount === 0 || isNaN(amount) ){
+      response = 'ERROR_AMOUNT'
+    }
+    if (moment.isDate(date)){
+      response = 'ERROR_DATE'
+    }
+    console.log(response)
+     return response;
+  }
+
   return (
     <Grid container spacing={3} justify='center' alignItems='center'>
       <Paper className={classes.root}>
@@ -147,6 +189,7 @@ const AddDebt = () => {
                 value={amount}
                 onChange={handleChangeAmount}
                 placeholder='Enter amount...'
+                type="number"
               />
             </FormControl>
           </Grid>
@@ -165,10 +208,33 @@ const AddDebt = () => {
           </FormControl>
           </Grid>
         </form>
-        <Button fullWidth variant='contained' color='primary' onClick={addDebt}>
+        <Button fullWidth variant='contained' color='primary' onClick={handleClickOpen}>
           Add Debt
         </Button>
       </Paper>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'>
+        <DialogTitle id='alert-dialog-title'>Add new debt?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            <Typography>Name: {personName}</Typography> <br />
+            <Typography>Amount: {amount}</Typography> <br />
+            <Typography>Date: {moment(date).format('DD-MM-YY  HH:mm')} </Typography> <br />
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color='primary'>
+            Cancel
+          </Button>
+          <Button onClick={addDebt} color='primary' autoFocus>
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Grid>
   );
 };
